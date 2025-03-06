@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comanda {{ comanda.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .status {
+            font-size: 18px;
+            font-weight: bold;
+            color: green;
+        }
+        .itens {
+            margin-top: 20px;
+        }
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+            color: blue;
+        }
+        .form-container {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Comanda {{ comanda.id }}</h1>
+    <p class="status">Status: {{ comanda.status }}</p>
+
+    <div class="itens">
+        <h2>Itens da Comanda</h2>
+        {% if comanda.itens.all %}
+            <ul>
+                {% for item in comanda.itens.all %}
+                    <li>{{ item.quantidade }}x {{ item.produto.nome }} - R$ {{ item.calcular_total }}</li>
+                {% endfor %}
+            </ul>
+        
+        {% else %}
+            <p>Nenhum item nesta comanda.</p>
+        {% endif %}
+    </div>
+
+    <p>Total: R$ {{ total }}</p>
+
+
+    <div class="form-container">
+        <h2>Adicionar Item</h2>
+        <form method="post" action="{% url 'adicionar_item' comanda.id %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Adicionar Item</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Comandas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Lista de Comandas</h1>
+
+        <!-- Barra de busca -->
+        <form method="GET" action="{% url 'listar_comandas' %}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="Buscar comanda..." value="{{ query }}">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+
+        <!-- Tabela para exibir as comandas -->
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in page_obj %}
+                    <tr>
+                        <td>{{ item.comanda.id }}</td>
+                        <td>
+                            <!-- Formulário para editar o nome do cliente -->
+                            <form method="post" action="{% url 'editar_cliente' item.comanda.id %}" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="text" name="cliente" value="{{ item.comanda.cliente }}" class="form-control" style="width: 150px;">
+                                <button type="submit" class="btn btn-sm btn-success" style="padding: 4px 6px; font-size: 14px; border-radius: 4px;">
+                                    Salvar
+                                </button>
+                                
+                            </form>
+                        </td>
+                        <td>{{ item.comanda.status }}</td>
+                        <td>R$ {{ item.total }}</td>
+                        <td>
+                            <a href="{% url 'detalhes_comanda' item.comanda.id %}" class="btn btn-info btn-sm">Detalhes</a>
+                            <a href="{% url 'editar_comanda' item.comanda.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'excluir_comanda' item.comanda.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">Nenhuma comanda encontrada.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Paginação -->
+        <div class="pagination">
+            <span class="step-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page=1&q={{ query }}" class="btn btn-sm btn-outline-primary">&laquo; Primeira</a>
+                    <a href="?page={{ page_obj.previous_page_number }}&q={{ query }}" class="btn btn-sm btn-outline-primary">Anterior</a>
+                {% endif %}
+
+                <span class="current">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}&q={{ query }}" class="btn btn-sm btn-outline-primary">Próxima</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}&q={{ query }}" class="btn btn-sm btn-outline-primary">Última &raquo;</a>
+                {% endif %}
+            </span>
+        </div>
+
+        <!-- Botão para criar nova comanda -->
+        <a href="{% url 'criar_comanda' %}" class="btn btn-primary mt-3">Criar Nova Comanda</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
