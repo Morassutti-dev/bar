@@ -1,11 +1,13 @@
 from . import views
 from django.contrib import admin
 from django.urls import path
+from django.shortcuts import redirect
 from accounts.views import register_view, login_view, logout_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('register/', register_view, name='register'),
+    path('', lambda request: redirect('/login/')),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     path('comanda/criar/', views.criar_comanda, name='criar_comanda'),
